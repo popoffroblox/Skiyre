@@ -19,6 +19,9 @@ shared.SkiyreLoaded = true
 shared.introFinished = false
 shared.throwawayService = cloneref(game:GetService('ReplicatedStorage'))
 shared.workspace = cloneref(workspace or game:GetService('Workspace'))
+shared.identifydevelopers = {
+        ['Main Developer'] = 'Sakaris'
+}
 shared.identifyscript = ((game:HttpGet('https://github.com/popoffroblox/Skiyre/raw/refs/heads/main/.alias', true):gsub('\n', '')) or 'Skiyre')
 shared.identifyversion = ((game:HttpGet('https://github.com/popoffroblox/Skiyre/raw/refs/heads/main/.version', true):gsub('\n', '')) or 'version couldn\'t be fetched.')
 local playersService = cloneref(game:GetService('Players'))
@@ -27,7 +30,7 @@ local starterGui = cloneref(game:GetService('StarterGui'))
 local lightingService = cloneref(game:GetService('Lighting'))
 local tweenService = cloneref(game:GetService('TweenService'))
 local debris = cloneref(game:GetService('Debris'))
-local textService = game:GetService("TextService")
+local textService = game:GetService('TextService')
 local lplr = playersService.LocalPlayer
 for _, activeskiyregui in ipairs(lplr.PlayerGui:GetDescendants()) do
         if activeskiyregui.Name:find('skiyre') then
@@ -136,22 +139,22 @@ until shared.introFinished
 
 local livenotifs = {}
 local notif = function(titlemessage, description, duration)
-        local screenGui = Instance.new("ScreenGui")
-        screenGui.Name = "notificationwindow:skiyre"
+        local screenGui = Instance.new('ScreenGui')
+        screenGui.Name = 'notificationwindow:skiyre'
         screenGui.Parent = lplr.PlayerGui
         screenGui.ResetOnSpawn = false
-        local window = Instance.new("Frame")
+        local window = Instance.new('Frame')
         window.BackgroundTransparency = 1
         window.Parent = screenGui
-        local notif = Instance.new("Frame")
+        local notif = Instance.new('Frame')
         notif.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
         notif.BackgroundTransparency = 0.2
         notif.BorderSizePixel = 0
         notif.Parent = window
-        local corner = Instance.new("UICorner")
+        local corner = Instance.new('UICorner')
         corner.CornerRadius = UDim.new(0, 6)
         corner.Parent = notif
-        local logo = Instance.new("ImageLabel")
+        local logo = Instance.new('ImageLabel')
         logo.Size = UDim2.new(0, 80, 0, 80)
         logo.Position = UDim2.new(0, 10, 0, 10)
         logo.BackgroundTransparency = 1
@@ -159,7 +162,7 @@ local notif = function(titlemessage, description, duration)
         createTween(logo, {Rotation = 0}, 1)
         logo.Image = shared.assets.images.skiyre
         logo.Parent = notif
-        local title = Instance.new("TextLabel")
+        local title = Instance.new('TextLabel')
         title.Text = titlemessage or shared.identifyscript
         title.Size = UDim2.new(0, 280, 0, 30)
         title.Position = UDim2.new(0, 100, 0, 10)
@@ -171,8 +174,8 @@ local notif = function(titlemessage, description, duration)
         title.TextXAlignment = Enum.TextXAlignment.Left
         title.TextWrapped = false
         title.Parent = notif
-        local desc = Instance.new("TextLabel")
-        desc.Text = description or "Nothing here..?"
+        local desc = Instance.new('TextLabel')
+        desc.Text = description or 'Nothing here..?'
         desc.Size = UDim2.new(0, 280, 0, 50)
         desc.Position = UDim2.new(0, 100, 0, 40)
         desc.BackgroundTransparency = 1
@@ -222,6 +225,6 @@ local notif = function(titlemessage, description, duration)
         end)
 end
 
-notif("Skiyre", "Loading Skiyre on " .. ({identifyexecutor()})[1], 4)
-
-notif("Skiyre", "The script is currently in demo! Please wait :)", 10)
+notif('Skiyre', 'Loading Skiyre on ' .. ({identifyexecutor()})[1], 4)
+notif('Skiyre', 'Created by: ' .. shared.identifydevelopers['Main Developer'], 6)
+notif('Skiyre', 'The script is currently in demo! Please wait :)', 10)
