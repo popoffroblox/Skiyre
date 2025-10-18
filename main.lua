@@ -2,7 +2,6 @@ local shared = shared or getgenv and getgenv() or _G
 if shared.startup then
         while task.wait() do end
 end
-task.wait(0.5)
 local cloneref = cloneref or function(obj)
         return obj
 end
@@ -29,14 +28,15 @@ local starterGui = cloneref(game:GetService('StarterGui'))
 local lightingService = cloneref(game:GetService('Lighting'))
 local tweenService = cloneref(game:GetService('TweenService'))
 local debris = cloneref(game:GetService('Debris'))
+local textService = game:GetService("TextService")
 local lplr = playersService.LocalPlayer
 for _, activeskiyregui in ipairs(lplr.PlayerGui:GetDescendants()) do
-        if activeskiryegui.Name:find('skiyre') then
+        if activeskiyregui.Name:find('skiyre') then
                 activeskiyregui:Destroy()
         end
 end
 for _, activeskiyregui in ipairs(coreGui:GetDescendants()) do
-        if activeskiryegui.Name:find('skiyre') then
+        if activeskiyregui.Name:find('skiyre') then
                 activeskiyregui:Destroy()
         end
 end
@@ -103,10 +103,9 @@ local initiateStartup = function()
         end
         blurFade(3, 20)
         loadSound(shared.assets.sounds.startup):Play()
-
         shared.startup = Instance.new('ScreenGui')
         shared.startup.Name = 'startup:skiyre'
-        debris:AddItem(startup, 2.5)
+        debris:AddItem(shared.startup, 2.5)
         task.delay(2.5, function()
                 shared.startup = nil
         end)
@@ -142,24 +141,17 @@ local notif = function(titlemessage, description, duration)
         screenGui.Name = "notificationwindow:skiyre"
         screenGui.Parent = lplr.PlayerGui
         screenGui.ResetOnSpawn = false
-
         local window = Instance.new("Frame")
-        window.Size = UDim2.new(0, 400, 0, 100)
         window.BackgroundTransparency = 1
         window.Parent = screenGui
-
         local notif = Instance.new("Frame")
-        notif.Size = UDim2.new(0, 382, 0, 101)
         notif.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
         notif.BackgroundTransparency = 0.2
-        notif.Position = UDim2.new(0, 0, 0, 0)
         notif.BorderSizePixel = 0
         notif.Parent = window
-
         local corner = Instance.new("UICorner")
         corner.CornerRadius = UDim.new(0, 6)
         corner.Parent = notif
-
         local logo = Instance.new("ImageLabel")
         logo.Size = UDim2.new(0, 80, 0, 80)
         logo.Position = UDim2.new(0, 10, 0, 10)
@@ -168,7 +160,6 @@ local notif = function(titlemessage, description, duration)
         createTween(logo, {Rotation = 0}, 1)
         logo.Image = shared.assets.images.skiyre
         logo.Parent = notif
-
         local title = Instance.new("TextLabel")
         title.Text = titlemessage or shared.identifyscript
         title.Size = UDim2.new(0, 280, 0, 30)
@@ -176,10 +167,11 @@ local notif = function(titlemessage, description, duration)
         title.BackgroundTransparency = 1
         title.TextColor3 = Color3.fromRGB(255, 255, 255)
         title.Font = Enum.Font.Ubuntu
-        title.TextScaled = true
+        title.TextScaled = false
+        title.TextSize = 20
         title.TextXAlignment = Enum.TextXAlignment.Left
+        title.TextWrapped = false
         title.Parent = notif
-
         local desc = Instance.new("TextLabel")
         desc.Text = description or "Nothing here..?"
         desc.Size = UDim2.new(0, 280, 0, 50)
@@ -193,7 +185,20 @@ local notif = function(titlemessage, description, duration)
         desc.TextScaled = false
         desc.TextSize = 18
         desc.Parent = notif
-
+        task.wait()
+        local vp = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(1280, 720)
+        local screenW = vp.X
+        local padX = 120
+        local maxAllowedW = math.min(800, screenW - 40)
+        local titleSize = textService:GetTextSize(title.Text, title.TextSize, title.Font, Vector2.new(maxAllowedW, 1000))
+        local descSize  = textService:GetTextSize(desc.Text, desc.TextSize, desc.Font, Vector2.new(maxAllowedW, 1000))
+        local notifWidth = math.max(382, math.ceil(math.max(titleSize.X, descSize.X) + padX))
+        notifWidth = math.min(notifWidth, screenW - 20)
+        local notifHeight = math.max(101, math.ceil(descSize.Y + 70))
+        title.Size = UDim2.new(0, notifWidth - padX, 0, 30)
+        desc.Size  = UDim2.new(0, notifWidth - padX, 0, notifHeight - 50)
+        notif.Size  = UDim2.new(0, notifWidth, 0, notifHeight)
+        window.Size = notif.Size
         local baseY = 0.8
         local offset = 0
         for _, active in ipairs(livenotifs) do
@@ -201,10 +206,8 @@ local notif = function(titlemessage, description, duration)
         end
         window.Position = UDim2.new(1, 10, baseY - offset, 0)
         table.insert(livenotifs, notif)
-
-        local targetPos = UDim2.new(1, -420, baseY - offset, 0)
+        local targetPos = UDim2.new(1, -window.Size.X.Offset - 10, baseY - offset, 0)
         createTween(window, {Position = targetPos}, 1)
-
         task.delay(duration or 3, function()
                 createTween(logo, {Rotation = math.random(1, 2) == 2 and 360 or -360}, 2)
                 createTween(window, {Position = UDim2.new(1, 10, baseY - offset, 0)}, 1)
@@ -220,5 +223,6 @@ local notif = function(titlemessage, description, duration)
         end)
 end
 
-notif("Skiyre", "The script is currently in demo! Please wait :)", 10)
+notif("Skiyre", "Loading Skiyre on " .. ({identifyexecutor()})[1], 4)
 
+notif("Skiyre", "The script is currently in demo! Please wait :)", 10)
