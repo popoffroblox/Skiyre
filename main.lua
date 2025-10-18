@@ -1,10 +1,3 @@
-queue_on_teleport([[
-	repeat task.wait() until game:IsLoaded()
-	task.delay(0.1, function()
-		loadstring(game:HttpGet('https://raw.githubusercontent.com/popoffroblox/Skiyre/refs/heads/main/main.lua', true))()
-	end)
-]])
-
 local shared = getgenv and getgenv() or _G
 local cloneref = cloneref or function(obj)
         return obj
@@ -20,6 +13,15 @@ local lightingService = cloneref(game:GetService('Lighting'))
 local tweenService = cloneref(game:GetService('TweenService'))
 local debris = cloneref(game:GetService('Debris'))
 local lplr = playersService.LocalPlayer
+shared.queue_on_teleport = queue_on_teleport or function(obj)
+        return obj
+end
+queue_on_teleport([[
+        repeat task.wait() until game:IsLoaded()
+        task.delay(0.1, function()
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/popoffroblox/Skiyre/refs/heads/main/main.lua', true))()
+        end)
+]])
 shared.assets = {
         images = {
                 skiyre = 'rbxassetid://88510213951751'
