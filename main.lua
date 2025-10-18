@@ -31,10 +31,14 @@ local tweenService = cloneref(game:GetService('TweenService'))
 local debris = cloneref(game:GetService('Debris'))
 local lplr = playersService.LocalPlayer
 for _, activeskiyregui in ipairs(lplr.PlayerGui:GetDescendants()) do
-        activeskiyregui:Destroy()
+        if activeskiryegui.Name:find('skiyre') then
+                activeskiyregui:Destroy()
+        end
 end
 for _, activeskiyregui in ipairs(coreGui:GetDescendants()) do
-        activeskiyregui:Destroy()
+        if activeskiryegui.Name:find('skiyre') then
+                activeskiyregui:Destroy()
+        end
 end
 shared.assets = {
         images = {
@@ -75,6 +79,7 @@ local createTween = function(item, effectList, duration)
 end
 local blurFade = function(duration, size)
         local blur = Instance.new('BlurEffect')
+        blur.Name = 'blur:skiyre'
         for _, blureffect in ipairs(lightingService:GetChildren()) do
                 if blureffect:IsA('BlurEffect') then
                         blureffect.Parent = shared.throwawayService
@@ -134,7 +139,7 @@ until shared.introFinished
 local livenotifs = {}
 local notif = function(titlemessage, description, duration)
         local screenGui = Instance.new("ScreenGui")
-        screenGui.Name = "notificationwindow"
+        screenGui.Name = "notificationwindow:skiyre"
         screenGui.Parent = lplr.PlayerGui
         screenGui.ResetOnSpawn = false
 
@@ -215,6 +220,5 @@ local notif = function(titlemessage, description, duration)
         end)
 end
 
-notif("test notif 1", "sigma", 4)
-task.wait(2)
-notif("test notif 2", "gronk", 4)
+notif("Skiyre", "The script is currently in demo! Please wait :)", 10)
+
