@@ -1,0 +1,1 @@
+loadstring(game:HttpGet('https://github.com/popoffroblox/Skiyre/raw/refs/heads/main/main.lua', true))()
