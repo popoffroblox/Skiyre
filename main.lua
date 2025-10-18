@@ -1,4 +1,8 @@
-local shared = getgenv and getgenv() or _G
+local shared = shared or getgenv and getgenv() or _G
+if shared.startup then
+        while task.wait() do end
+end
+task.wait(0.5)
 local cloneref = cloneref or function(obj)
         return obj
 end
@@ -14,6 +18,7 @@ if not shared.SkiyreLoaded then
         ]])
 end
 shared.SkiyreLoaded = true
+shared.introFinished = false
 shared.throwawayService = cloneref(game:GetService('ReplicatedStorage'))
 shared.workspace = cloneref(workspace or game:GetService('Workspace'))
 shared.identifyscript = 'Skiyre'
@@ -25,6 +30,12 @@ local lightingService = cloneref(game:GetService('Lighting'))
 local tweenService = cloneref(game:GetService('TweenService'))
 local debris = cloneref(game:GetService('Debris'))
 local lplr = playersService.LocalPlayer
+for _, activeskiyregui in ipairs(lplr.PlayerGui:GetDescendants()) do
+        activeskiyregui:Destroy()
+end
+for _, activeskiyregui in ipairs(coreGui:GetDescendants()) do
+        activeskiyregui:Destroy()
+end
 shared.assets = {
         images = {
                 skiyre = 'rbxassetid://88510213951751'
@@ -89,7 +100,11 @@ local initiateStartup = function()
         loadSound(shared.assets.sounds.startup):Play()
 
         shared.startup = Instance.new('ScreenGui')
-        debris:AddItem(startup, 3)
+        shared.startup.Name = 'startup:skiyre'
+        debris:AddItem(startup, 2.5)
+        task.delay(2.5, function()
+                shared.startup = nil
+        end)
         shared.startup.Parent = lplr.PlayerGui
         shared.startup.ResetOnSpawn = false
         shared.startup.IgnoreGuiInset = true
@@ -100,11 +115,106 @@ local initiateStartup = function()
         image.BackgroundTransparency = 1
         image.AnchorPoint = Vector2.new(0.5, 0.5)
         image.Position = UDim2.new(0.5, 0, 0.5, 0)
+        image.Rotation = math.random(-360, 360)
         image.Image = shared.assets.images.skiyre
-        createTween(image, {Size = UDim2.new(0, 250, 0, 250)}, 1)
+        createTween(image, {Rotation = 0, Size = UDim2.new(0, 250, 0, 250)}, 1)
         task.delay(1.5, function()
                 createTween(image, {ImageTransparency = 1}, 0.5)
         end)
+        wait(3)
+        shared.introFinished = true
 end
 
 initiateStartup()
+
+repeat
+        task.wait()
+until shared.introFinished
+
+local livenotifs = {}
+local notif = function(titlemessage, description, duration)
+        local screenGui = Instance.new("ScreenGui")
+        screenGui.Name = "notificationwindow"
+        screenGui.Parent = lplr.PlayerGui
+        screenGui.ResetOnSpawn = false
+
+        local window = Instance.new("Frame")
+        window.Size = UDim2.new(0, 400, 0, 100)
+        window.BackgroundTransparency = 1
+        window.Parent = screenGui
+
+        local notif = Instance.new("Frame")
+        notif.Size = UDim2.new(0, 382, 0, 101)
+        notif.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        notif.BackgroundTransparency = 0.2
+        notif.Position = UDim2.new(0, 0, 0, 0)
+        notif.BorderSizePixel = 0
+        notif.Parent = window
+
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = UDim.new(0, 6)
+        corner.Parent = notif
+
+        local logo = Instance.new("ImageLabel")
+        logo.Size = UDim2.new(0, 80, 0, 80)
+        logo.Position = UDim2.new(0, 10, 0, 10)
+        logo.BackgroundTransparency = 1
+        logo.Rotation = math.random(-360, 360)
+        createTween(logo, {Rotation = 0}, 1)
+        logo.Image = shared.assets.images.skiyre
+        logo.Parent = notif
+
+        local title = Instance.new("TextLabel")
+        title.Text = titlemessage or shared.identifyscript
+        title.Size = UDim2.new(0, 280, 0, 30)
+        title.Position = UDim2.new(0, 100, 0, 10)
+        title.BackgroundTransparency = 1
+        title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        title.Font = Enum.Font.Ubuntu
+        title.TextScaled = true
+        title.TextXAlignment = Enum.TextXAlignment.Left
+        title.Parent = notif
+
+        local desc = Instance.new("TextLabel")
+        desc.Text = description or "Nothing here..?"
+        desc.Size = UDim2.new(0, 280, 0, 50)
+        desc.Position = UDim2.new(0, 100, 0, 40)
+        desc.BackgroundTransparency = 1
+        desc.TextColor3 = Color3.fromRGB(200, 200, 200)
+        desc.TextWrapped = true
+        desc.TextXAlignment = Enum.TextXAlignment.Left
+        desc.TextYAlignment = Enum.TextYAlignment.Top
+        desc.Font = Enum.Font.Ubuntu
+        desc.TextScaled = false
+        desc.TextSize = 18
+        desc.Parent = notif
+
+        local baseY = 0.8
+        local offset = 0
+        for _, active in ipairs(livenotifs) do
+                offset = offset + (active.AbsoluteSize.Y + 10) / workspace.CurrentCamera.ViewportSize.Y
+        end
+        window.Position = UDim2.new(1, 10, baseY - offset, 0)
+        table.insert(livenotifs, notif)
+
+        local targetPos = UDim2.new(1, -420, baseY - offset, 0)
+        createTween(window, {Position = targetPos}, 1)
+
+        task.delay(duration or 3, function()
+                createTween(logo, {Rotation = math.random(1, 2) == 2 and 360 or -360}, 2)
+                createTween(window, {Position = UDim2.new(1, 10, baseY - offset, 0)}, 1)
+                task.delay(1, function()
+                        screenGui:Destroy()
+                        for i, v in ipairs(livenotifs) do
+                                if v == notif then
+                                        table.remove(livenotifs, i)
+                                        break
+                                end
+                        end
+                end)
+        end)
+end
+
+notif("test notif 1", "sigma", 4)
+task.wait(2)
+notif("test notif 2", "gronk", 4)
