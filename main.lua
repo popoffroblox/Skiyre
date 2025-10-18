@@ -1,9 +1,10 @@
-queue_on_teleport([
+queue_on_teleport([[
         repeat task.wait() until game:IsLoaded()
         task.delay(0.1, function()
-                loadstring(game:HttpGet('https://raw.githubusercontent.com/popoffroblox/Skiyre/refs/heads/main/main.lua', true))()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/popoffroblox/Skiyre/refs/heads/main/main.lua', true))()
         end)
-])
+]])
+
 local shared = getgenv and getgenv() or _G
 local cloneref = cloneref or function(obj)
         return obj
