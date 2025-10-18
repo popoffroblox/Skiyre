@@ -8,14 +8,13 @@ end
 local queue_on_teleport = queue_on_teleport or function(obj)
         return obj
 end
-if not shared.SkiyreLoaded then
-        queue_on_teleport([[
-                repeat task.wait() until game:IsLoaded()
-                task.delay(0.1, function()
-                        loadstring(game:HttpGet('https://raw.githubusercontent.com/popoffroblox/Skiyre/refs/heads/main/main.lua', true))()
-                end)
-        ]])
-end
+queue_on_teleport([[
+        if shared.SkiyreLoaded then return end
+        repeat task.wait() until game:IsLoaded()
+        task.delay(0.1, function()
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/popoffroblox/Skiyre/refs/heads/main/main.lua', true))()
+        end)
+]])
 shared.SkiyreLoaded = true
 shared.introFinished = false
 shared.throwawayService = cloneref(game:GetService('ReplicatedStorage'))
