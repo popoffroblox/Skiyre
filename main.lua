@@ -1,4 +1,9 @@
-local shared = shared or getgenv and getgenv() or _G
+local shared = shared or getgenv and getgenv() or _G or function() end
+local isfile = isfile or function() end
+local makefolder = makefolder or function() end
+local writefile = writefile or function() end
+local queue_on_teleport = queue_on_teleport or function() end
+local identifyexecutor = identifyexecutor or function() end
 local selfdestruct = function()
         while task.wait() do end
 end
